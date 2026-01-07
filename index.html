@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সেতু-বন্ধন | Shetu-Bondhan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+       
+        :root {
+            --primary: #d62929; /* Deep Red */
+            --secondary: #f4f4f4; /* Off White */
+            --accent: #ffc107; /* Mustard Gold */
+            --text: #333;
+            --font: 'Hind Siliguri', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font);
+            background-color: var(--secondary);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            /* Alpona-style*/
+            background-image: radial-gradient(circle at 50% 120%, #ffc107 10%, transparent 12%),
+                              radial-gradient(circle at 0% 100%, #ffc107 5%, transparent 6%),
+                              radial-gradient(circle at 100% 100%, #ffc107 5%, transparent 6%);
+        }
+
+        h1 { margin: 0; font-weight: 700; font-size: 1.8rem; }
+        p.subtitle { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+     
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            padding-bottom: 80px; 
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eee;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(214, 41, 41, 0.2);
+            border-color: var(--primary);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .info { padding: 12px; text-align: center; }
+        .price { color: var(--primary); font-weight: 700; font-size: 1.1rem; display: block; margin: 5px 0; }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-weight: 500;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .btn:active { transform: scale(0.95); }
+
+      
+        .floating-cart {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--text);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            z-index: 1000;
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: flex-end; 
+        }
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px 20px 0 0;
+            padding: 25px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+        @media(min-width: 600px) {
+            .modal { align-items: center; }
+            .modal-content { border-radius: 15px; }
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: var(--font);
+            box-sizing: border-box; 
+        }
+
+        /* Payment Options */
+        .payment-options { display: flex; gap: 10px; margin-bottom: 15px; }
+        .p-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .p-btn.active { background: #ffe5e5; border-color: var(--primary); color: var(--primary); font-weight: bold; }
+
+      
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>সেতুবন্ধন</h1>
+    <p class="subtitle">2026 Special Sale</p>
+</header>
+
+<div class="container">
+    <div class="products" id="product-list">
+        </div>
+</div>
+
+<div class="floating-cart" onclick="openCart()">
+    <span id="cart-count">0</span> টি পণ্য | ৳<span id="cart-total">0</span>
+</div>
+
+<div class="modal" id="cartModal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;">আপনার অর্ডার</h2>
+            <button onclick="closeCart()" style="background:none; border:none; font-size:1.5rem;">&times;</button>
+        </div>
+
+        <div id="cart-items" style="margin-bottom: 20px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            <p style="text-align:center; color:#777;">কার্ট খালি!</p>
+        </div>
+
+        <form id="orderForm" onsubmit="placeOrder(event)">
+            <h3>ডেলিভারি তথ্য</h3>
+            <div class="form-group">
+                <label>আপনার নাম</label>
+                <input type="text" id="name" placeholder="যেমন: করিম আহমেদ" required>
+            </div>
+            <div class="form-group">
+                <label>মোবাইল নাম্বার</label>
+                <input type="tel" id="phone" placeholder="017........" required>
+            </div>
+            <div class="form-group">
+                <label>ঠিকানা (বিস্তারিত)</label>
+                <textarea id="address" rows="2" placeholder="বাড়ি, রাস্তা, এলাকা..." required></textarea>
+            </div>
+
+            <h3>পেমেন্ট মেথড</h3>
+            <div class="payment-options">
+                <div class="p-btn active" onclick="selectPayment('cod', this)">নগদ (COD)</div>
+                <div class="p-btn" onclick="selectPayment('bkash', this)">বিকাশ</div>
+                <div class="p-btn" onclick="selectPayment('nagad', this)">নগদ (Send Money)</div>
+            </div>
+            <div id="payment-info" style="margin-bottom:15px; font-size:0.9rem; color:var(--primary); display:none;">
+                বিকাশ/নগদ সেন্ড মানি করুন: <b>01705753439</b>
+            </div>
+
+            <button type="submit" class="btn" style="width:100%; padding:15px; font-size:1.1rem;">অর্ডার কনফার্ম করুন</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    // Get this from @BotFather on Telegram
+    const TELEGRAM_BOT_TOKEN = "8230329734:AAH7vaFJ2LNw6tPUJda_xkOyr2_NqNRm8KA";
+    // Get this from @userinfobot on Telegram (This is YOUR ID, so you get the msg)
+    const ADMIN_CHAT_ID = "5554712806";
+
+  
+    const products = [
+        { id: 1, name: "বৈশাখী পাঞ্জাবি (লাল)", price: 1250, img: "https://via.placeholder.com/300x300/d62929/ffffff?text=Punjabi" },
+        { id: 2, name: "তাঁতের শাড়ি (সাদা-লাল)", price: 2100, img: "https://via.placeholder.com/300x300/f4f4f4/d62929?text=Saree" },
+        { id: 3, name: "মাটির গয়না সেট", price: 450, img: "https://via.placeholder.com/300x300/ffc107/333333?text=Jewelry" },
+        { id: 4, name: "একতারা শো-পিস", price: 300, img: "https://via.placeholder.com/300x300/8B4513/ffffff?text=Ektara" },
+        { id: 5, name: "গামছা প্রিন্ট ফতুয়া", price: 650, img: "https://via.placeholder.com/300x300/008000/ffffff?text=Fotua" },
+        { id: 6, name: "হ্যান্ডপেইন্ট মাস্ক", price: 120, img: "https://via.placeholder.com/300x300/333333/ffffff?text=Mask" },
+    ];
+
+    let cart = [];
+    let selectedPayment = 'cod';
+
+    
+    const productList = document.getElementById('product-list');
+    products.forEach(p => {
+        productList.innerHTML += `
+            <div class="card">
+                <img src="${p.img}" alt="${p.name}">
+                <div class="info">
+                    <div style="font-size:0.95rem; font-weight:500; height:40px; overflow:hidden;">${p.name}</div>
+                    <span class="price">৳${p.price}</span>
+                    <button class="btn" onclick="addToCart(${p.id})">কার্টে যোগ করুন</button>
+                </div>
+            </div>
+        `;
+    });
+
+  
+    function addToCart(id) {
+        const product = products.find(p => p.id === id);
+        const existing = cart.find(i => i.id === id);
+        if(existing) existing.qty++;
+        else cart.push({...product, qty: 1});
+        updateCartUI();
+        
+     
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.innerText = "যুক্ত হয়েছে ✔";
+        setTimeout(() => btn.innerText = originalText, 1000);
+    }
+
+    function updateCartUI() {
+        const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+        const count = cart.reduce((sum, i) => sum + i.qty, 0);
+        
+        document.getElementById('cart-count').innerText = count;
+        document.getElementById('cart-total').innerText = total;
+
+        const cartItemsDiv = document.getElementById('cart-items');
+        if(cart.length === 0) {
+            cartItemsDiv.innerHTML = '<p style="text-align:center; color:#777;">কার্ট খালি!</p>';
+        } else {
+            cartItemsDiv.innerHTML = cart.map((item, index) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:0.9rem;">
+                    <div>${item.name} <br> <small>৳${item.price} x ${item.qty}</small></div>
+                    <div style="font-weight:bold;">৳${item.price * item.qty} 
+                        <span onclick="removeFromCart(${index})" style="color:red; cursor:pointer; margin-left:5px;">&times;</span>
+                    </div>
+                </div>
+            `).join('') + `<div style="text-align:right; font-weight:bold; margin-top:10px; border-top:1px dashed #ddd; padding-top:5px;">মোট: ৳${total}</div>`;
+        }
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartUI();
+    }
+
+ 
+    function openCart() { document.getElementById('cartModal').style.display = 'flex'; }
+    function closeCart() { document.getElementById('cartModal').style.display = 'none'; }
+    
+    function selectPayment(method, elem) {
+        selectedPayment = method;
+        document.querySelectorAll('.p-btn').forEach(b => b.classList.remove('active'));
+        elem.classList.add('active');
+        const info = document.getElementById('payment-info');
+        info.style.display = (method === 'bkash' || method === 'nagad') ? 'block' : 'none';
+    }
+
+    async function placeOrder(e) {
+        e.preventDefault();
+        if(cart.length === 0) return alert("কার্ট খালি!");
+
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const total = document.getElementById('cart-total').innerText;
+
+        // Generate Order Summary
+        let orderDetails = cart.map(i => `- ${i.name} (x${i.qty}) = ৳${i.price*i.qty}`).join('\n');
+        
+        // Message to send to Telegram
+        const message = `
+📦 *নতুন অর্ডার এসেছে!* (Web)
+
+👤 *নাম:* ${name}
+📞 *ফোন:* ${phone}
+📍 *ঠিকানা:* ${address}
+💳 *পেমেন্ট:* ${selectedPayment.toUpperCase()}
+
+🛒 *অর্ডার লিস্ট:*
+${orderDetails}
+
+💰 *সর্বমোট:* ৳${total}
+`;
+
+
+        const url = `https://corsproxy.io/?` + encodeURIComponent(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`);
+        
+        const data = {
+            chat_id: ADMIN_CHAT_ID,
+            text: message,
+            parse_mode: "Markdown",
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        { text: "✅ Accept Order", callback_data: `accept_${Date.now()}` },
+                        { text: "❌ Decline", callback_data: `decline_${Date.now()}` }
+                    ]
+                ]
+            }
+        };
+
+        const btn = document.querySelector('button[type="submit"]');
+        btn.innerText = "অর্ডার প্রসেসিং হচ্ছে...";
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+
+            if(response.ok) {
+                alert("আপনার অর্ডার সফল হয়েছে! আমরা শীঘ্রই যোগাযোগ করবো।");
+                cart = [];
+                updateCartUI();
+                closeCart();
+                document.getElementById('orderForm').reset();
+            } else {
+                alert("অর্ডার পাঠাতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
+            }
+        } catch (error) {
+            alert("নেটওয়ার্ক এরর! দয়া করে ইন্টারনেট চেক করুন।");
+        }
+        
+        btn.innerText = "অর্ডার কনফার্ম করুন";
+        btn.disabled = false;
+    }
+</script>
+
+</body>
+</html>
